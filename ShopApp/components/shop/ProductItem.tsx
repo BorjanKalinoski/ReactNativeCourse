@@ -1,17 +1,16 @@
 import React from "react";
-import {View, Text, Image, StyleSheet, Button, TouchableOpacity, TouchableNativeFeedback, Platform} from "react-native";
-import Colors from "../../constants/Colors";
+import {View, Text, Image, StyleSheet,  TouchableOpacity, TouchableNativeFeedback, Platform} from "react-native";
+import Card from "../UI/Card";
 
 const ProductItem = props => {
-    const {imgUrl, title, price, onAddToCart, onViewDetail} = props;
-
+    const {imgUrl, title, price, onAddToCart, onSelect} = props;
     let TouchableCmp: any = TouchableOpacity;
     if (Platform.OS === 'android' && Platform.Version >= 21) {
         TouchableCmp = TouchableNativeFeedback;
     }
     return <View style={styles.touchable}>
-        <TouchableCmp onPress={onViewDetail} useForeground>
-            <View style={styles.product}>
+        <TouchableCmp onPress={onSelect} useForeground>
+            <Card style={styles.product}>
                 <View style={styles.imageContainer}>
                     <Image
                         style={styles.image}
@@ -23,23 +22,15 @@ const ProductItem = props => {
                     <Text style={styles.price}>${price.toFixed(2)}</Text>
                 </View>
                 <View style={styles.buttons}>
-                    <Button color={Colors.primary} title="View Details" onPress={onViewDetail}/>
-                    <Button color={Colors.primary} title="To Cart" onPress={onAddToCart}/>
+                    {props.children}
                 </View>
-            </View>
+            </Card>
         </TouchableCmp>
     </View>;
-
 };
 
 const styles = StyleSheet.create({
     product: {
-        shadowColor: 'black',
-        shadowOpacity: 0.26,
-        shadowOffset: {width: 0, height: 2},
-        shadowRadius: 8,
-        elevation: 5,
-        borderRadius: 10,
         backgroundColor: 'white',
         overflow: 'hidden',
         height: '100%',
@@ -50,7 +41,6 @@ const styles = StyleSheet.create({
         margin: 20,
 
     },
-
     imageContainer: {
         width: '100%',
         height: '60%',
@@ -81,10 +71,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        height: '20%',
+        height: '18%',
         paddingHorizontal: 20
     }
 });
-
 
 export default ProductItem;

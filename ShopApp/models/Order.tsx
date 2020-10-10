@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 class Order {
 
     constructor(id, items, totalAmount, date) {
@@ -6,7 +8,12 @@ class Order {
         this.totalAmount = totalAmount;
         this.date = date;
     }
+
+    get getDate() {
+        return dayjs(this.date).format('DD-MM-YYYY HH:mm')
+    }
 }
+
 
 
 export default Order;

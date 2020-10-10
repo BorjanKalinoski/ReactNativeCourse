@@ -7,6 +7,10 @@ import ProductsOverviewScreen from '../screens/shop/ProductsOverviewScreen';
 import ProductDetailScreen from "../screens/shop/ProductDetailScreen";
 import CartScreen from "../screens/shop/CartScreen";
 import OrdersScreen from "../screens/shop/OrdersScreen";
+import {Ionicons} from "@expo/vector-icons";
+import React from "react";
+import UserProductsScreen from "../screens/user/UserProductsScreen";
+import EditProductScreen from "../screens/user/EditProductScreen";
 
 const defaultNavigationOptions = {
     headerStyle: {
@@ -27,21 +31,55 @@ const ProductsNavigator = createStackNavigator({
     ProductDetail: ProductDetailScreen,
     Cart: CartScreen
 }, {
-    defaultNavigationOptions
+    defaultNavigationOptions,
+    navigationOptions: {
+        drawerIcon: drawerConfig => (<Ionicons
+            name={Platform.OS === 'android' ? 'md-cart' : 'ios-cart'}
+            size={23}
+            color={drawerConfig.tintColor}
+        />)
+
+    }
 });
+
+const AdminNavigator = createStackNavigator({
+        UserProducts: UserProductsScreen,
+        EditProduct: EditProductScreen
+    },
+    {
+        defaultNavigationOptions,
+        navigationOptions: {
+            drawerIcon: drawerConfig => (<Ionicons
+                name={Platform.OS === 'android' ? 'md-create' : 'ios-create'}
+                size={23}
+                color={drawerConfig.tintColor}
+            />)
+
+        }
+    }
+);
 
 const OrdersNavigator = createStackNavigator({
         Orders: OrdersScreen
     },
     {
-        defaultNavigationOptions
+        defaultNavigationOptions,
+        navigationOptions: {
+            drawerIcon: drawerConfig => (<Ionicons
+                name={Platform.OS === 'android' ? 'md-list' : 'ios-list'}
+                size={23}
+                color={drawerConfig.tintColor}
+            />)
+
+        }
     }
 );
 
 
 const ShopNavigator = createDrawerNavigator({
     Products: ProductsNavigator,
-    Orders: OrdersNavigator
+    Orders: OrdersNavigator,
+    Admin: AdminNavigator
 }, {
     contentOptions: {
         activeTintColor: Colors.primary
