@@ -1,5 +1,5 @@
 import PRODUCTS from "../../data/dummy-data";
-import {CREATE_PRODUCT, DELETE_PRODUCT, UPDATE_PRODUCT} from "../actions/products";
+import {CREATE_PRODUCT, DELETE_PRODUCT, SET_PRODUCTS, UPDATE_PRODUCT} from "../actions/products";
 import Product from "../../models/Product";
 
 const initialState = {
@@ -10,7 +10,7 @@ const initialState = {
 export default (state = initialState, action) => {
     switch (action.type) {
         case CREATE_PRODUCT:
-            const newProduct = new Product(new Date().toString(), 'u1', action.productData.title, action.productData.imgUrl,
+            const newProduct = new Product(action.productData.id, 'u1', action.productData.title, action.productData.imgUrl,
                 action.productData.description,
                 action.productData.price);
             return {
@@ -20,7 +20,15 @@ export default (state = initialState, action) => {
             }
         case UPDATE_PRODUCT:
             const userIndex = state.userProducts.findIndex(product => product.id === action.pid);
-            const updatedProduct = new Product(action.pid, state.userProducts[userIndex].ownerId, action.productData.title, action.productData.img, action.productData.desc, state.userProducts[userIndex].price);
+            const updatedProduct = new Product(
+                action.pid,
+                state.userProducts[userIndex].ownerId,
+                action.productData.title,
+                action.productData.imgUrl,
+                action.productData.description,
+                state.userProducts[userIndex].price
+            );
+
             const updatedUserProducts = [...state.userProducts];
             updatedUserProducts[userIndex] = updatedProduct;
 
@@ -32,6 +40,12 @@ export default (state = initialState, action) => {
                 availableProducts: updatedAvailProducts,
                 userProducts: updatedUserProducts
 
+            };
+        case SET_PRODUCTS:
+            return {
+                ...state,
+                userProducts: action.products.filter(product => product.ownerId === 'u1'),
+                availableProducts: action.products
             };
 
         case DELETE_PRODUCT:

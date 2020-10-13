@@ -1,14 +1,17 @@
-import React from "react";
+import React, {useState} from "react";
 
-import {Button, View, Text, StyleSheet, FlatList} from 'react-native';
+import {Button, View, Text, StyleSheet, FlatList, ActivityIndicator} from 'react-native';
 import {useSelector,useDispatch} from "react-redux";
 import Colors from "../../constants/Colors";
 import CartItem from "../../components/shop/CartItem";
 import * as cartActions from "../../store/actions/cart";
 import * as ordersActions from "../../store/actions/orders";
 import Card from "../../components/UI/Card";
+import {isLoading} from "expo-font";
 
 const CartScreen = props => {
+    const [isLoading, setIsLoading] = useState(false);
+
     const totalAmount = useSelector(state => state.cart.totalAmount);
     const cartItems = useSelector(state => {
         const transformedCartItems = [];
@@ -24,20 +27,29 @@ const CartScreen = props => {
         return transformedCartItems.sort((a, b) => a.productId > b.productId ? 1 : -1);
     });
 
+    const addOrderHandler = async () => {
+        setIsLoading(true);
+        await dispatch(ordersActions.addOrder(cartItems, totalAmount));
+        setIsLoading(false);
+    };
+
     const dispatch = useDispatch();
 
     return <View style={styles.screen}>
         <Card style={styles.summary}>
-            <Text style={styles.summaryText}>Total: <Text style={styles.amount}>${Math.round(totalAmount.toFixed(2) * 100) / 100}</Text></Text>
-            <Button
-                title="Order Now"
-                color={Colors.accent}
-                onPress={() => {
-                    dispatch(ordersActions.addOrder(cartItems, totalAmount));
-                }}
-                disabled={!cartItems.length}
-            />
+            <Text style={styles.summaryText}>Total: <Text
+                style={styles.amount}>${Math.round(totalAmount.toFixed(2) * 100) / 100}</Text></Text>
+            {isLoading
+                ? <ActivityIndicator size="small" color={Colors.primary}/>
+                : <Button
+                    title="Order Now"
+                    color={Colors.accent}
+                    onPress={addOrderHandler}
+                    disabled={!cartItems.length}
+                />
+            }
         </Card>
+
         <FlatList
             data={cartItems}
             keyExtractor={item => item.productId}
