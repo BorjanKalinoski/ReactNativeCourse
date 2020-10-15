@@ -1,5 +1,5 @@
 import React from "react";
-import {Alert, Button, FlatList, Platform, StyleSheet} from "react-native";
+import {Alert, Button, FlatList, Platform, StyleSheet, Text, View} from "react-native";
 
 
 import ProductItem from "../../components/shop/ProductItem";
@@ -27,6 +27,12 @@ const UserProductsScreen = props => {
         ]);
     };
     const dispatch = useDispatch();
+
+    if (userProducts.length === 0) {
+        return <View style={{flex:1,justifyContent:'center', alignItems: 'center'}}>
+            <Text>No products found, maybe start creating some?</Text>
+        </View>
+    }
     return <FlatList
         keyExtractor={item => item.id}
         data={userProducts}

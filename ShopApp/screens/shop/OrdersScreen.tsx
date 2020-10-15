@@ -38,7 +38,11 @@ const OrdersScreen = props => {
             <ActivityIndicator size="large" color={Colors.primary}/>
         </View>;
     }
-
+    if (orders.length === 0) {
+        return <View style={{flex:1,justifyContent:'center', alignItems: 'center'}}>
+            <Text>No orders found found, maybe start ordering some products?</Text>
+        </View>
+    }
     return <FlatList
         data={orders}
         renderItem={(itemData) => <OrderItem items={itemData.item.items} totalAmount={itemData.item.totalAmount}

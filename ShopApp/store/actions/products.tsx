@@ -5,8 +5,9 @@ export const CREATE_PRODUCT = 'CREATE_PRODUCT';
 export const UPDATE_PRODUCT = 'UPDATE_PRODUCT';
 export const SET_PRODUCTS = 'SET_PRODUCTS';
 export const fetchProducts = () => {
-    return async dispatch => {
-        // execute any async code you want!
+    return async (dispatch, getState) => {
+
+        const userId = getState().auth.userId;
 
         try {
             const response = await fetch('https://rn-complete-guide-523a9.firebaseio.com/products.json');
@@ -22,16 +23,17 @@ export const fetchProducts = () => {
             for (const key in resData) {
                 loadedProducts.push(new Product(
                     key,
-                    'u1',
+                    resData[key].ownerId,
                     resData[key].title,
                     resData[key].imgUrl,
                     resData[key].description,
                     resData[key].price,
-                ))
+                ));
             }
             dispatch({
                 type: SET_PRODUCTS,
-                products:loadedProducts
+                products: loadedProducts,
+                userProducts: loadedProducts.filter(prod => prod.ownerId === userId)
             });
         } catch (e) {
             throw e;
@@ -39,9 +41,10 @@ export const fetchProducts = () => {
     };
 };
 export const deleteProduct = productId => {
-    return async dispatch => {
+    return async (dispatch, getState) => {
+        const token = getState().auth.token;
         try {
-            const response = await fetch(`https://rn-complete-guide-523a9.firebaseio.com/products/${productId}.json`, {
+            const response = await fetch(`https://rn-complete-guide-523a9.firebaseio.com/products/${productId}.json?auth=${token}`, {
                 method: "DELETE"
             });
 
@@ -63,10 +66,12 @@ export const deleteProduct = productId => {
 };
 
 export const createProduct = (title, description, imgUrl, price) => {
-    return async dispatch => {
-        // execute any async code you want!
+    return async (dispatch, getState) => {
+        const token = getState().auth.token;
+        const userId = getState().auth.userId;
+
         try {
-            const response = await fetch('https://rn-complete-guide-523a9.firebaseio.com/products.json', {
+            const response = await fetch(`https://rn-complete-guide-523a9.firebaseio.com/products.json?auth=${token}`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
@@ -75,7 +80,8 @@ export const createProduct = (title, description, imgUrl, price) => {
                     title,
                     description,
                     imgUrl,
-                    price
+                    price,
+                    ownerId:userId
                 })
             });
             if (!response.ok) {
@@ -90,7 +96,8 @@ export const createProduct = (title, description, imgUrl, price) => {
                     title,
                     description,
                     imgUrl,
-                    price
+                    price,
+                    ownerId:userId
                 }
             });
         } catch (err) {
@@ -102,9 +109,10 @@ export const createProduct = (title, description, imgUrl, price) => {
 
 
 export const updateProduct = (id, title, description, imgUrl) => {
-    return async dispatch => {
+    return async (dispatch, getState) => {
+        const token = getState().auth.token;
         try {
-            const response = await fetch(`https://rn-complete-guide-523a9.firebaseio.com/products/${id}.json`, {
+            const response = await fetch(`https://rn-complete-guide-523a9.firebaseio.com/products/${id}.json?auth=${token}`, {
                 method: "PATCH",
                 headers: {
                     'Content-Type': 'application/json',
